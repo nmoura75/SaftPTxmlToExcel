@@ -28,12 +28,9 @@ public class SafTParserSalesInvoice {
 
     public static void main(String[] args) {
         try {
-            // Replace with the actual path to your SAF-T PT XML file
-            String xmlFilePath = "G:\\Other computers\\O meu Portátil (1)\\clientes 5nov18\\Elite\\2024\\vendas\\saft\\ana outubro\\novo 20dez24 SAF-T_10_2024.xml";
-            String excelFilePath = "saft_out_24_novo.xlsx";
 
             // Parse the XML file
-            List<SalesInvoice> salesInvoices = parseSalesInvoices(xmlFilePath);
+            List<SalesInvoice> salesInvoices = parseSalesInvoices(Constants.XML_FILE_PATH);
 
             // Create an Excel workbook
             Workbook workbook = new XSSFWorkbook();
@@ -65,7 +62,7 @@ public class SafTParserSalesInvoice {
             }
 
             // Write the workbook to an Excel file
-            try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
+            try (FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH)) {
                 workbook.write(outputStream);
             }
 
