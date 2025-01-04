@@ -66,7 +66,7 @@ public class SafTParserSalesInvoice {
                 workbook.write(outputStream);
             }
 
-            System.out.println("XML data successfully converted to Excel file: " + excelFilePath);
+            System.out.println("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
 
             // Process the extracted customer data (e.g., print to console)
             /*for (SalesInvoice salesInvoice : salesInvoices) {
