@@ -2,7 +2,6 @@ package org.xmlParseExcel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,7 +33,7 @@ public class SafTParserSalesInvoice {
 
             // Create an Excel workbook
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Data");
+            Sheet sheet = workbook.createSheet(Constants.SHEET_NAME);
 
             // Write data to Excel sheet
             /*int rowNum = 0;
@@ -81,7 +80,7 @@ public class SafTParserSalesInvoice {
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
             System.err.println("Error parsing XML or writing to Excel file: " + e.getMessage());
-            logger.error("Error parsing XML or writing to Excel file: " + e.getMessage());
+            logger.error("Error parsing XML or writing to Excel file: ", e);
         }
     }
 
