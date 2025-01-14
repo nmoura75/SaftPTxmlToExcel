@@ -2,6 +2,7 @@ package org.xmlParseExcel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,21 +36,15 @@ public class SafTParserSalesInvoice {
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet(Constants.SHEET_NAME);
 
-            // Write data to Excel sheet
-            /*int rowNum = 0;
-            for (SalesInvoice rowData : salesInvoices) {
-                Row row = sheet.createRow(rowNum++);
-                int colNum = 0;
-                for (String cellData : rowData) {
-                    Cell cell = row.createCell(colNum++);
-                    cell.setCellValue(cellData);
-                }
-            }*/
+            // Create the title row
+            ExcelTitleRow.createTitleRow(sheet, 0);
 
-            int rowNum = 0;
+            int rowNum = 1;
             for (SalesInvoice invoice : salesInvoices) {
                 Row row = sheet.createRow(rowNum++);
                 int colNum = 0;
+
+
 
                 // Access and write specific fields of the SalesInvoice object
                 row.createCell(colNum++).setCellValue(invoice.getInvoiceNo());
@@ -57,7 +52,12 @@ public class SafTParserSalesInvoice {
                 row.createCell(colNum++).setCellValue(invoice.getInvoiceStatus());
                 row.createCell(colNum++).setCellValue(invoice.getInvoiceType());
                 row.createCell(colNum++).setCellValue(invoice.getSystemEntryDate());
-                row.createCell(colNum++).setCellValue(invoice.getNetTotal());
+
+                // Parse numbers as numbers
+                createNumericCell(row, colNum++, invoice.getNetTotal());
+                createNumericCell(row, colNum++, invoice.getTaxPayable());
+                createNumericCell(row, colNum++, invoice.getGrossTotal());
+
             }
 
             // Write the workbook to an Excel file
@@ -84,6 +84,16 @@ public class SafTParserSalesInvoice {
         }
     }
 
+    private static void createNumericCell(Row row, int colNum, String value) {
+        Cell cell = row.createCell(colNum);
+        try {
+            double numericValue = Double.parseDouble(value);
+            cell.setCellValue(numericValue);
+        } catch (NumberFormatException e) {
+            cell.setCellValue(value);
+        }
+    }
+
     private static List<SalesInvoice> parseSalesInvoices(String xmlFilePath) throws ParserConfigurationException, SAXException, IOException {
         List<SalesInvoice> salesInvoices = new ArrayList<>();
 
@@ -106,6 +116,8 @@ public class SafTParserSalesInvoice {
                 salesInvoice.setInvoiceType(getElementText(customerElement, "InvoiceType"));
                 salesInvoice.setSystemEntryDate(getElementText(customerElement, "SystemEntryDate"));
                 salesInvoice.setNetTotal(getElementText(customerElement, "NetTotal"));
+                salesInvoice.setTaxPayable(getElementText(customerElement, "TaxPayable"));
+                salesInvoice.setGrossTotal(getElementText(customerElement, "GrossTotal"));
                 // ... get other customer details
 
                 salesInvoices.add(salesInvoice);
@@ -134,6 +146,8 @@ public class SafTParserSalesInvoice {
         private String InvoiceType;
         private String SystemEntryDate;
         private String NetTotal;
+        private String TaxPayable;
+        private String GrossTotal;
         // ... other customer attributes
 
         // Getters and Setters
@@ -184,6 +198,23 @@ public class SafTParserSalesInvoice {
         public void setNetTotal(String netTotal) {
             NetTotal = netTotal;
         }
+
+        public String getTaxPayable() {
+            return TaxPayable;
+        }
+
+        public void setTaxPayable(String taxPayable) {
+            TaxPayable = taxPayable;
+        }
+
+        public String getGrossTotal() {
+            return GrossTotal;
+        }
+
+        public void setGrossTotal(String grossTotal) {
+            GrossTotal = grossTotal;
+        }
+
         // ... other getters and setters
     }
 }
