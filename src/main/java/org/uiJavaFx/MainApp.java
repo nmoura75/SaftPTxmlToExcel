@@ -3,18 +3,33 @@ package org.uiJavaFx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import org.xmlParseExcel.Constants;
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Label label = new Label("Hello, JavaFX!");
-        StackPane root = new StackPane(label);
-        Scene scene = new Scene(root, 300, 200);
+        Label label = new Label("Enter XML File Path:");
+        TextField textField = new TextField();
+        textField.setText(Constants.XML_FILE_PATH); // Set initial value
 
-        primaryStage.setTitle("JavaFX Application");
+        Button button = new Button("Update Path");
+        button.setOnAction(e -> {
+            Constants.XML_FILE_PATH = textField.getText();
+            System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
+        });
+
+        VBox root = new VBox(10, label, textField, button);
+
+
+
+        Scene scene = new Scene(root, 600, 400);
+
+        primaryStage.setTitle("XML to Excel");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
