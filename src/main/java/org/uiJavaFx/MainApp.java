@@ -20,12 +20,6 @@ public class MainApp extends Application {
         TextField textField = new TextField();
         textField.setText(Constants.XML_FILE_PATH); // Set initial value
 
-        Button updateButton = new Button("Update Path");
-        updateButton.setOnAction(e -> {
-            Constants.XML_FILE_PATH = textField.getText();
-            System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
-        });
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML Files", "*.xml"));
 
@@ -34,10 +28,12 @@ public class MainApp extends Application {
             File selectedFile = fileChooser.showOpenDialog(primaryStage);
             if (selectedFile != null) {
                 textField.setText(selectedFile.getAbsolutePath());
+                Constants.XML_FILE_PATH = selectedFile.getAbsolutePath();
+                System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
             }
         });
 
-        VBox root = new VBox(10, label, textField, browseButton, updateButton);
+        VBox root = new VBox(20, label, textField, browseButton);
 
         Scene scene = new Scene(root, 600, 400);
 
