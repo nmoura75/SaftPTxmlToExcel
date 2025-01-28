@@ -16,24 +16,40 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Label label = new Label("Enter XML File Path:");
-        TextField textField = new TextField();
-        textField.setText(Constants.XML_FILE_PATH); // Set initial value
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML Files", "*.xml"));
+        Label selectXmlLabel = new Label("Enter XML File Path:");
+        TextField textFieldForSelectXml = new TextField();
+        textFieldForSelectXml.setText(Constants.XML_FILE_PATH); // Set initial value
 
         Button browseButton = new Button("Browse...");
         browseButton.setOnAction(e -> {
-            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            FileChooser fileChooserSelectXML = new FileChooser();
+            fileChooserSelectXML.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML Files", "*.xml"));
+            File selectedFile = fileChooserSelectXML.showOpenDialog(primaryStage);
             if (selectedFile != null) {
-                textField.setText(selectedFile.getAbsolutePath());
+                textFieldForSelectXml.setText(selectedFile.getAbsolutePath());
                 Constants.XML_FILE_PATH = selectedFile.getAbsolutePath();
                 System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
             }
         });
 
-        VBox root = new VBox(20, label, textField, browseButton);
+
+        Label saveLabel = new Label("Select file path to save Excel:");
+        TextField textFieldForSave = new TextField();
+        textFieldForSave.setText(Constants.EXCEL_FILE_PATH); // Set initial value
+
+        Button saveButton = new Button("Save file...");
+        saveButton.setOnAction(e -> {
+            FileChooser fileChooserSave = new FileChooser();
+            fileChooserSave.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+            File selectedFile = fileChooserSave.showSaveDialog(primaryStage);
+            if (selectedFile != null) {
+                textFieldForSave.setText(selectedFile.getAbsolutePath());
+                Constants.EXCEL_FILE_PATH = selectedFile.getAbsolutePath();
+                System.out.println("Updated EXCEL_FILE_PATH: " + Constants.EXCEL_FILE_PATH);
+            }
+        });
+
+        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton);
 
         Scene scene = new Scene(root, 600, 400);
 
