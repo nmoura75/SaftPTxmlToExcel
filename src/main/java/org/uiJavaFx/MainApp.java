@@ -1,6 +1,7 @@
 package org.uiJavaFx;
 
 import javafx.application.Application;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -8,12 +9,16 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xmlParseExcel.Constants;
+import org.xmlParseExcel.SafTParserSalesInvoice;
 
 import java.io.File;
 
 public class MainApp extends Application {
 
+    private static final Logger logger = LogManager.getLogger(SafTParserSalesInvoice.class);
     @Override
     public void start(Stage primaryStage) {
         Label selectXmlLabel = new Label("Enter XML File Path:");
@@ -30,23 +35,27 @@ public class MainApp extends Application {
                 Constants.XML_FILE_PATH = selectedFile.getAbsolutePath();
                 System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
             }
+            logger.error("Need to choose a xml file");
         });
 
 
-        Label saveLabel = new Label("Select file path to save Excel:");
+        Label saveLabel = new Label("Select path to save Excel:");
         TextField textFieldForSave = new TextField();
         textFieldForSave.setText(Constants.EXCEL_FILE_PATH); // Set initial value
 
         Button saveButton = new Button("Save file...");
         saveButton.setOnAction(e -> {
-            FileChooser fileChooserSave = new FileChooser();
-            fileChooserSave.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
-            File selectedFile = fileChooserSave.showSaveDialog(primaryStage);
-            if (selectedFile != null) {
-                textFieldForSave.setText(selectedFile.getAbsolutePath());
-                Constants.EXCEL_FILE_PATH = selectedFile.getAbsolutePath();
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(primaryStage);
+            if (selectedDirectory != null) {
+                String xmlFileName = new File(Constants.XML_FILE_PATH).getName();
+                String excelFileName = xmlFileName.substring(0, xmlFileName.lastIndexOf('.')) + ".xls";
+                String filePath = selectedDirectory.getAbsolutePath() + File.separator + excelFileName;
+                textFieldForSave.setText(filePath);
+                Constants.EXCEL_FILE_PATH = filePath;
                 System.out.println("Updated EXCEL_FILE_PATH: " + Constants.EXCEL_FILE_PATH);
             }
+            logger.error("Need to choose a folder to save excel file");
         });
 
         VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton);
