@@ -34,8 +34,9 @@ public class MainApp extends Application {
                 textFieldForSelectXml.setText(selectedFile.getAbsolutePath());
                 Constants.XML_FILE_PATH = selectedFile.getAbsolutePath();
                 System.out.println("Updated XML_FILE_PATH: " + Constants.XML_FILE_PATH);
+            } else {
+                logger.error("Need to choose a xml file");
             }
-            logger.error("Need to choose a xml file");
         });
 
 
@@ -43,7 +44,7 @@ public class MainApp extends Application {
         TextField textFieldForSave = new TextField();
         textFieldForSave.setText(Constants.EXCEL_FILE_PATH); // Set initial value
 
-        Button saveButton = new Button("Save file...");
+        Button saveButton = new Button("Select folder...");
         saveButton.setOnAction(e -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(primaryStage);
@@ -54,11 +55,17 @@ public class MainApp extends Application {
                 textFieldForSave.setText(filePath);
                 Constants.EXCEL_FILE_PATH = filePath;
                 System.out.println("Updated EXCEL_FILE_PATH: " + Constants.EXCEL_FILE_PATH);
+            } else {
+                logger.error("Need to choose a folder to save excel file");
             }
-            logger.error("Need to choose a folder to save excel file");
         });
 
-        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton);
+        Button createExcelButton = new Button("Create Excel File");
+        createExcelButton.setOnAction(e -> {
+            SafTParserSalesInvoice.main(new String[]{});
+        });
+
+        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton, createExcelButton);
 
         Scene scene = new Scene(root, 600, 400);
 
