@@ -18,12 +18,12 @@ public class ExcelDataRows {
 
     private static final Logger logger = LogManager.getLogger(SafTParserSalesInvoice.class);
 
-    public static void dataRows(Sheet sheet, List<SalesInvoice> salesInvoices, Workbook workbook) throws IOException {
+    public static void dataRows(Sheet sheet, int rowIndex, SalesInvoice invoice, Workbook workbook) throws IOException {
 
 
-        int rowNum = 1;
-        for (SalesInvoice invoice : salesInvoices) {
-            Row row = sheet.createRow(rowNum++);
+        //int rowNum = 1;
+        //for (SalesInvoice invoice : salesInvoices) {
+            Row row = sheet.createRow(rowIndex);
             int colNum = 0;
 
 
@@ -43,7 +43,7 @@ public class ExcelDataRows {
             // Write the workbook to an Excel file
             FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH);
             workbook.write(outputStream);
-        }
+        //}
         System.out.println("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
     }
 
