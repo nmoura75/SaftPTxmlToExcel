@@ -40,6 +40,7 @@ public class CreateSalesInvoice {
                 salesInvoice.setNetTotal(getElementText(customerElement, "NetTotal"));
                 salesInvoice.setTaxPayable(getElementText(customerElement, "TaxPayable"));
                 salesInvoice.setGrossTotal(getElementText(customerElement, "GrossTotal"));
+                salesInvoice.setCustomerId(getElementText(customerElement, "CustomerID"));
                 // ... get other customer details
 
                 salesInvoices.add(salesInvoice);

@@ -33,6 +33,7 @@ public class ExcelDataRows {
             row.createCell(colNum++).setCellValue(invoice.getInvoiceStatus());
             row.createCell(colNum++).setCellValue(invoice.getInvoiceType());
             row.createCell(colNum++).setCellValue(invoice.getSystemEntryDate());
+            row.createCell(colNum++).setCellValue(invoice.getCustomerId());
 
             // Parse numbers as numbers
             createNumericCell(row, colNum++, invoice.getNetTotal());

@@ -11,6 +11,7 @@ public class SalesInvoice {
         private String NetTotal;
         private String TaxPayable;
         private String GrossTotal;
+        private String CustomerId;
         // ... other customer attributes
 
         // Getters and Setters
@@ -77,6 +78,13 @@ public class SalesInvoice {
         public void setGrossTotal(String grossTotal) {
             GrossTotal = grossTotal;
         }
+        public String getCustomerId() {
+            return CustomerId;
+        }
+
+        public void setCustomerId(String customerId) {
+            CustomerId = customerId;
+    }
 
         // ... other getters and setters
     }

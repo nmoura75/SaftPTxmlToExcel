@@ -60,12 +60,14 @@ public class MainApp extends Application {
             }
         });
 
+        Label fileCreated = new Label();
         Button createExcelButton = new Button("Create Excel File");
         createExcelButton.setOnAction(e -> {
             SafTParserSalesInvoice.main(new String[]{});
+            fileCreated.setText("XML data successfully converted to Excel file");
         });
 
-        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton, createExcelButton);
+        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton, createExcelButton, fileCreated);
 
         Scene scene = new Scene(root, 600, 400);
 
