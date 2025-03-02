@@ -20,12 +20,8 @@ public class ExcelDataRows {
 
     public static void dataRows(Sheet sheet, int rowIndex, SalesInvoice invoice, Workbook workbook) throws IOException {
 
-
-        //int rowNum = 1;
-        //for (SalesInvoice invoice : salesInvoices) {
             Row row = sheet.createRow(rowIndex);
             int colNum = 0;
-
 
             // Access and write specific fields of the SalesInvoice object
             row.createCell(colNum++).setCellValue(invoice.getInvoiceNo());
@@ -44,8 +40,6 @@ public class ExcelDataRows {
             // Write the workbook to an Excel file
             FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH);
             workbook.write(outputStream);
-        //}
-        System.out.println("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
     }
 
     private static void createNumericCell(Row row, int colNum, String value) {

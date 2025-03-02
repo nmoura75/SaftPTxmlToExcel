@@ -1,6 +1,7 @@
 package org.uiJavaFx;
 
 import javafx.application.Application;
+import javafx.scene.control.Alert;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.scene.Scene;
@@ -63,8 +64,22 @@ public class MainApp extends Application {
         Label fileCreated = new Label();
         Button createExcelButton = new Button("Create Excel File");
         createExcelButton.setOnAction(e -> {
-            SafTParserSalesInvoice.main(new String[]{});
-            fileCreated.setText("XML data successfully converted to Excel file");
+            try {
+                SafTParserSalesInvoice.main(new String[]{});
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Success");
+                alert.setHeaderText(null);
+                alert.setContentText("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
+                System.out.println("XML data successfully converted to Excel file" + Constants.EXCEL_FILE_PATH);
+                alert.showAndWait();
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error during processing");
+                alert.setContentText("An error occurred: " + ex.getMessage());
+                alert.showAndWait();
+                logger.error("Error processing XML or creating excel file", ex);
+            }
         });
 
         VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton, createExcelButton, fileCreated);
