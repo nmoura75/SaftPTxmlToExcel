@@ -22,7 +22,12 @@ public class SafTParserSalesInvoice {
 
     private static final Logger logger = LogManager.getLogger(SafTParserSalesInvoice.class);
 
-    public static void main(String[] args) {
+    // New interface for progress reporting
+    public interface ProgressListener {
+        void onProgressUpdate(double progress);
+    }
+    
+    public static void main(String[] args, ProgressListener progressListener) {
 
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -30,7 +35,8 @@ public class SafTParserSalesInvoice {
 
             // Parse the XML file
             List<SalesInvoice> salesInvoices = CreateSalesInvoice.parseSalesInvoices(Constants.XML_FILE_PATH);
-
+            double totalInvoices = salesInvoices.size();
+            double currentProgress = 0.0;
 
             // Create an Excel workbook
             Workbook workbook = new XSSFWorkbook();
@@ -43,11 +49,16 @@ public class SafTParserSalesInvoice {
             for (int i = 0; i < salesInvoices.size(); i++) {
                 final int rowIndex = i + 1;
                 final SalesInvoice invoice = salesInvoices.get(i);
+                currentProgress = (double) (i + 1) / totalInvoices*0.95;
+                double finalCurrentProgress = currentProgress;
                 executorService.submit(() -> {
                     try {
                         ExcelDataRows.dataRows(sheet, rowIndex, invoice, workbook);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         logger.error("Error writing to Excel file for invoice: " + invoice, e);
+                    } finally {
+                        // Now, call onProgressUpdate on the passed listener object
+                        progressListener.onProgressUpdate(finalCurrentProgress);
                     }
                 });
             }
@@ -55,6 +66,10 @@ public class SafTParserSalesInvoice {
             // Shutdown executor service and wait for tasks to complete
             executorService.shutdown();
             executorService.awaitTermination(1, TimeUnit.MINUTES);
+
+            // Write the workbook to the file after all data rows are added
+            ExcelDataRows.writeWorkbookToFile(workbook);
+            progressListener.onProgressUpdate(1.0); // Report 100% completion
 
         } catch (ParserConfigurationException | SAXException | IOException | InterruptedException e) {
             System.err.println("Error parsing XML or writing to Excel file: " + e.getMessage());

@@ -1,14 +1,15 @@
 package org.uiJavaFx;
 
 import javafx.application.Application;
-import javafx.scene.control.Alert;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +21,9 @@ import java.io.File;
 public class MainApp extends Application {
 
     private static final Logger logger = LogManager.getLogger(SafTParserSalesInvoice.class);
+    private ProgressBar progressBar;
+    private Label progressLabel;
+
     @Override
     public void start(Stage primaryStage) {
         Label selectXmlLabel = new Label("Enter XML File Path:");
@@ -39,7 +43,6 @@ public class MainApp extends Application {
                 logger.error("Need to choose a xml file");
             }
         });
-
 
         Label saveLabel = new Label("Select path to save Excel:");
         TextField textFieldForSave = new TextField();
@@ -64,25 +67,73 @@ public class MainApp extends Application {
         Label fileCreated = new Label();
         Button createExcelButton = new Button("Create Excel File");
         createExcelButton.setOnAction(e -> {
-            try {
-                SafTParserSalesInvoice.main(new String[]{});
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Success");
-                alert.setHeaderText(null);
-                alert.setContentText("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
-                System.out.println("XML data successfully converted to Excel file" + Constants.EXCEL_FILE_PATH);
-                alert.showAndWait();
-            } catch (Exception ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Error during processing");
-                alert.setContentText("An error occurred: " + ex.getMessage());
-                alert.showAndWait();
-                logger.error("Error processing XML or creating excel file", ex);
-            }
+            // Reset Progress Bar
+            progressBar.setProgress(0.0);
+            progressLabel.setText("0%");
+
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    SafTParserSalesInvoice.main(new String[]{}, new SafTParserSalesInvoice.ProgressListener() {
+
+                        public void onProgressUpdate(double progress) {
+                            Platform.runLater(() -> {
+                                progressBar.setProgress(progress);
+                                progressLabel.setText(String.format("%.0f%%", progress * 100));
+                            });
+                        }
+                    });
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Success");
+                        alert.setHeaderText(null);
+                        alert.setContentText("XML data successfully converted to Excel file: " + Constants.EXCEL_FILE_PATH);
+                        System.out.println("XML data successfully converted to Excel file" + Constants.EXCEL_FILE_PATH);
+                        alert.showAndWait();
+                        // Reset progress bar after success
+                        progressBar.setProgress(0.0);
+                        progressLabel.setText("0%");
+                    });
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    Throwable ex = getException();
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Error during processing");
+                        alert.setContentText("An error occurred: " + ex.getMessage());
+                        alert.showAndWait();
+                        // Reset progress bar after error
+                        progressBar.setProgress(0.0);
+                        progressLabel.setText("0%");
+                    });
+                    logger.error("Error processing XML or creating excel file", ex);
+                }
+            };
+            new Thread(task).start();
         });
 
-        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton, saveLabel, textFieldForSave, saveButton, createExcelButton, fileCreated);
+        // Reset Progress Bar
+        progressBar = new ProgressBar(0.0);
+        progressLabel = new Label("0%");
+        HBox progressBox = new HBox(10, progressBar, progressLabel);
+        progressBox.setAlignment(Pos.CENTER);
+        progressBar.setPrefWidth(200);
+
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(event -> primaryStage.close());
+
+        VBox root = new VBox(20, selectXmlLabel, textFieldForSelectXml, browseButton,
+                saveLabel, textFieldForSave, saveButton, createExcelButton, fileCreated, progressBox, closeButton);
 
         Scene scene = new Scene(root, 600, 400);
 

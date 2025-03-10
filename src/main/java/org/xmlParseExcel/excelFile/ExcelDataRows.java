@@ -16,9 +16,9 @@ import java.util.List;
 
 public class ExcelDataRows {
 
-    private static final Logger logger = LogManager.getLogger(SafTParserSalesInvoice.class);
+    private static final Logger logger = LogManager.getLogger(ExcelDataRows.class);
 
-    public static void dataRows(Sheet sheet, int rowIndex, SalesInvoice invoice, Workbook workbook) throws IOException {
+    public static void dataRows(Sheet sheet, int rowIndex, SalesInvoice invoice, Workbook workbook) {
 
             Row row = sheet.createRow(rowIndex);
             int colNum = 0;
@@ -38,8 +38,8 @@ public class ExcelDataRows {
 
 
             // Write the workbook to an Excel file
-            FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH);
-            workbook.write(outputStream);
+           // FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH);
+           // workbook.write(outputStream);
     }
 
     private static void createNumericCell(Row row, int colNum, String value) {
@@ -49,6 +49,12 @@ public class ExcelDataRows {
             cell.setCellValue(numericValue);
         } catch (NumberFormatException e) {
             cell.setCellValue(value);
+        }
+    }
+
+    public static void writeWorkbookToFile(Workbook workbook) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH)) {
+            workbook.write(outputStream);
         }
     }
 }
