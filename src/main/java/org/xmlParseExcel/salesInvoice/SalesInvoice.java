@@ -1,5 +1,7 @@
 package org.xmlParseExcel.salesInvoice;
 
+import org.xmlParseExcel.customer.Customer;
+
 public class SalesInvoice {
 
     // Create a simple POJO to hold customer data
@@ -12,6 +14,7 @@ public class SalesInvoice {
         private String TaxPayable;
         private String GrossTotal;
         private String CustomerId;
+        private Customer customer;
         // ... other customer attributes
 
         // Getters and Setters
@@ -86,6 +89,13 @@ public class SalesInvoice {
             CustomerId = customerId;
     }
 
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
         // ... other getters and setters
     }
 

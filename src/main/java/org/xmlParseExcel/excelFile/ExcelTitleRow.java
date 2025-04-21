@@ -15,6 +15,8 @@ public class ExcelTitleRow {
         row.createCell(colNum++).setCellValue("InvoiceType");
         row.createCell(colNum++).setCellValue("SystemEntryDate");
         row.createCell(colNum++).setCellValue("CustomerID");
+        row.createCell(colNum++).setCellValue("CompanyName");
+        row.createCell(colNum++).setCellValue("CustomerTaxID");
         row.createCell(colNum++).setCellValue("NetTotal");
         row.createCell(colNum++).setCellValue("TaxPayable");
         row.createCell(colNum++).setCellValue("GrossTotal");

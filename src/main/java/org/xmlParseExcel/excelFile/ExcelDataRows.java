@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.xmlParseExcel.Constants;
 import org.xmlParseExcel.SafTParserSalesInvoice;
+import org.xmlParseExcel.customer.Customer;
 import org.xmlParseExcel.salesInvoice.SalesInvoice;
 
 import java.io.FileOutputStream;
@@ -24,12 +25,18 @@ public class ExcelDataRows {
             int colNum = 0;
 
             // Access and write specific fields of the SalesInvoice object
+            //createNumericCell(row, colNum++, invoice.getInvoiceNo());
             row.createCell(colNum++).setCellValue(invoice.getInvoiceNo());
             row.createCell(colNum++).setCellValue(invoice.getInvoiceDate());
             row.createCell(colNum++).setCellValue(invoice.getInvoiceStatus());
             row.createCell(colNum++).setCellValue(invoice.getInvoiceType());
             row.createCell(colNum++).setCellValue(invoice.getSystemEntryDate());
             row.createCell(colNum++).setCellValue(invoice.getCustomerId());
+
+            //new columns of the Customer information
+            Customer customer = invoice.getCustomer();
+            row.createCell(colNum++).setCellValue(customer.getCompanyName());
+            row.createCell(colNum++).setCellValue(customer.getCustomerTaxID());
 
             // Parse numbers as numbers
             createNumericCell(row, colNum++, invoice.getNetTotal());
