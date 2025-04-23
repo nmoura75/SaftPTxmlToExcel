@@ -30,7 +30,8 @@ public class ExcelDataRows {
             row.createCell(colNum++).setCellValue(invoice.getInvoiceDate());
             String invoiceStatus = invoice.getInvoiceStatus(); // Get status
             row.createCell(colNum++).setCellValue(invoiceStatus);
-            row.createCell(colNum++).setCellValue(invoice.getInvoiceType());
+            String invoiceType = invoice.getInvoiceType();
+            row.createCell(colNum++).setCellValue(invoiceType);
             row.createCell(colNum++).setCellValue(invoice.getSystemEntryDate());
             row.createCell(colNum++).setCellValue(invoice.getCustomerId());
 
@@ -55,9 +56,13 @@ public class ExcelDataRows {
                 taxPayableCell.setCellValue(0.0); // Set TaxPayable to 0 if status is "A"
                 grossTotalCell.setCellValue(0.0); // Set GrossTotal to 0 if status is "A"
             } else {
-                createNumericCell(row, colNum++, invoice.getNetTotal()); // Otherwise, use the original value
-                createNumericCell(row, colNum++, invoice.getTaxPayable());
-                createNumericCell(row, colNum++, invoice.getGrossTotal());
+                // Determine the sign based on InvoiceType
+                double signMultiplier = "NC".equals(invoiceType) ? -1.0 : 1.0;
+
+                // Apply the sign multiplier when creating numeric cells
+                createNumericCell(row, colNum++, invoice.getNetTotal(), signMultiplier);
+                createNumericCell(row, colNum++, invoice.getTaxPayable(), signMultiplier);
+                createNumericCell(row, colNum++, invoice.getGrossTotal(), signMultiplier);
             }
 
             // Write the workbook to an Excel file
@@ -65,7 +70,7 @@ public class ExcelDataRows {
            // workbook.write(outputStream);
     }
 
-    private static void createNumericCell(Row row, int colNum, String value) {
+    private static void createNumericCell(Row row, int colNum, String value, double signMultiplier) {
         Cell cell = row.createCell(colNum);
         if (value == null || value.trim().isEmpty()) {
             cell.setCellValue(""); // Handle null or empty strings gracefully
@@ -73,14 +78,19 @@ public class ExcelDataRows {
         }
         try {
             double numericValue = Double.parseDouble(value);
-            cell.setCellValue(numericValue);
+            // Apply the sign multiplier
+            cell.setCellValue(numericValue * signMultiplier);
         } catch (NumberFormatException e) {
             // Log the error and write the original string if parsing fails
             logger.warn("Could not parse numeric value: '" + value + "'. Writing as string.", e);
             cell.setCellValue(value);
         }
     }
-
+    // Overload for cases where signMultiplier is not needed (defaults to 1.0)
+    private static void createNumericCell(Row row, int colNum, String value) {
+        createNumericCell(row, colNum, value, 1.0);
+    }
+    
     public static void writeWorkbookToFile(Workbook workbook) throws IOException {
         try (FileOutputStream outputStream = new FileOutputStream(Constants.EXCEL_FILE_PATH)) {
             workbook.write(outputStream);
